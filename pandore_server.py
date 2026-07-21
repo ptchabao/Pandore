@@ -377,8 +377,8 @@ def build_overview() -> dict[str, Any]:
 
     return {
         "hero": {
-            "title": "Pandore – Tes lives TikTok",
-            "subtitle": "Tous tes lives archivés, au même endroit.",
+            "title": "Pandore — Ici, le secret des hommes laisse sa trace",
+            "subtitle": "Quiconque entre ne cherche pas des images, mais l’ombre que les voix ont laissée derrière elles.",
             "searchPlaceholder": "Cherche un créateur, un titre, une date ou un mot-clé",
         },
         "continueWatching": continue_list,
