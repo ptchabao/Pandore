@@ -1,0 +1,26 @@
+<svg width="640" height="360" viewBox="0 0 640 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1C1234" />
+      <stop offset="100%" stop-color="#090909" />
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(320 160) rotate(90) scale(160 260)">
+      <stop stop-color="#6F4BFF" stop-opacity="0.55" />
+      <stop offset="1" stop-color="#6F4BFF" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <rect width="640" height="360" rx="28" fill="url(#bg)"/>
+  <rect width="640" height="360" rx="28" fill="url(#glow)"/>
+  <path d="M90 250H550" stroke="#C9A227" stroke-opacity="0.35" stroke-width="3"/>
+  <path d="M125 250V150H170V250" stroke="#D4AF37" stroke-opacity="0.6" stroke-width="5"/>
+  <path d="M195 250V122H240V250" stroke="#D4AF37" stroke-opacity="0.6" stroke-width="5"/>
+  <path d="M265 250V118H310V250" stroke="#D4AF37" stroke-opacity="0.6" stroke-width="5"/>
+  <path d="M335 250V118H380V250" stroke="#D4AF37" stroke-opacity="0.6" stroke-width="5"/>
+  <path d="M405 250V122H450V250" stroke="#D4AF37" stroke-opacity="0.6" stroke-width="5"/>
+  <path d="M475 250V150H520V250" stroke="#D4AF37" stroke-opacity="0.6" stroke-width="5"/>
+  <path d="M170 120H470" stroke="#D4AF37" stroke-opacity="0.4" stroke-width="6"/>
+  <path d="M182 112L210 80L238 112" stroke="#6F4BFF" stroke-opacity="0.6" stroke-width="4"/>
+  <path d="M254 104L290 68L326 104" stroke="#6F4BFF" stroke-opacity="0.6" stroke-width="4"/>
+  <path d="M378 104L414 68L450 104" stroke="#6F4BFF" stroke-opacity="0.6" stroke-width="4"/>
+  <circle cx="320" cy="111" r="10" fill="#D4AF37" fill-opacity="0.9"/>
+</svg>

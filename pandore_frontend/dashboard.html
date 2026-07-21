@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Pandore</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body class="dashboard-page">
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">Pandore</div>
+      <nav class="nav-links">
+        <a href="/">🏛 Accueil</a>
+        <a href="/dashboard">🗝 Dashboard</a>
+      </nav>
+    </header>
+
+    <main class="content dashboard-content">
+      <section class="hero hero-compact">
+        <p class="eyebrow">Archives de Pandore</p>
+        <h1>Boîte des comptes</h1>
+        <p>Gère les profils d’animateurs à suivre et les souvenirs scellés.</p>
+      </section>
+
+      <section class="dashboard-grid dashboard-grid-single">
+        <div class="dashboard-card wide">
+          <div class="dashboard-header">
+            <h2>Comptes de suivi</h2>
+            <span>Ajouter / retirer</span>
+          </div>
+          <div id="dashboardAccounts" class="accounts-list"></div>
+          <form id="dashboardForm" class="account-form">
+            <input id="dashboardName" type="text" placeholder="Nom du créateur" required />
+            <input id="dashboardUsername" type="text" placeholder="Pseudo / username" />
+            <button type="submit">Ajouter au suivi</button>
+          </form>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pandore - Tes lives TikTok</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">Pandore</div>
+      <nav class="nav-links">
+        <a href="/">🏛 Accueil</a>
+        <a href="/dashboard">🗝 Dashboard</a>
+      </nav>
+      <div class="search-wrap">
+        <input id="searchInput" type="search" placeholder="Rechercher un live, un créateur..." />
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Bibliothèque privée</p>
+          <h1 id="heroTitle">Pandore – Tes lives TikTok</h1>
+          <p id="heroSubtitle">Tous tes lives archivés, au même endroit.</p>
+          <div class="hero-chips">
+            <span>Temple des archives</span>
+            <span>Lives récents</span>
+            <span>Créateurs gardés</span>
+          </div>
+        </div>
+        <div class="hero-art">
+          <img src="/assets/pandore-temple.svg" alt="Temple grec de Pandore" />
+        </div>
+      </section>
+
+      <section id="continueSection" class="row-section"></section>
+      <section id="recentSection" class="row-section"></section>
+      <section id="creatorsSection" class="row-section"></section>
+      <section id="dateSection" class="row-section"></section>
+
+      <section id="liveView" class="live-view hidden">
+        <div class="player-wrap">
+          <div class="player-shell">
+            <div class="player-overlay">
+              <span class="overlay-pill">Live en archive</span>
+              <div class="overlay-meta">
+                <strong id="playerCreator"></strong>
+                <span id="playerTime"></span>
+              </div>
+            </div>
+            <video id="player" controls playsinline poster="/assets/pandore-temple.svg"></video>
+          </div>
+        </div>
+        <aside class="live-meta">
+          <h2 id="liveTitle"></h2>
+          <p id="liveCreator"></p>
+          <p id="liveDate"></p>
+          <p id="liveDuration"></p>
+          <div class="actions">
+            <button>Ajouter à ma liste</button>
+            <button>Marquer comme vu</button>
+            <button>Partager</button>
+          </div>
+          <div id="relatedSection"></div>
+        </aside>
+      </section>
+
+      <section id="creatorView" class="creator-view hidden">
+        <div class="creator-hero">
+          <div>
+            <p class="eyebrow">Temple du créateur</p>
+            <h2 id="creatorTitle"></h2>
+          </div>
+          <div id="creatorStats" class="creator-stats"></div>
+        </div>
+        <div id="creatorGrid" class="card-row"></div>
+      </section>
+
+      <section id="searchResults" class="row-section hidden"></section>
+    </main>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

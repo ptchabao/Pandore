@@ -7,9 +7,9 @@ from pathlib import Path
 
 
 def init_gettext(locale_dir, locale_name):
-    gettext.bindtextdomain('zh_CN', locale_dir)
-    gettext.textdomain('zh_CN')
-    os.environ['LANG'] = f'{locale_name}.utf8'
+    gettext.bindtextdomain('fr', locale_dir)
+    gettext.textdomain('fr')
+    os.environ['LANG'] = 'fr_FR.UTF-8'
     return gettext.gettext
 
 
@@ -18,7 +18,7 @@ if os.path.exists(Path(execute_dir) / '_internal/i18n'):
     locale_path = Path(execute_dir) / '_internal/i18n'
 else:
     locale_path = Path(execute_dir) / 'i18n'
-_tr = init_gettext(locale_path, 'zh_CN')
+_tr = init_gettext(locale_path, 'fr')
 original_print = builtins.print
 package_name = 'src'
 

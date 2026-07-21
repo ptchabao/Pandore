@@ -1,0 +1,58 @@
+[
+  {
+    "creatorSlug": "animateur-bobozi",
+    "name": "Animateur Bobozi",
+    "username": "animateur-bobozi",
+    "status": "active",
+    "avatar": "AN"
+  },
+  {
+    "creatorSlug": "animateur-raoul",
+    "name": "Animateur Raoul",
+    "username": "animateur-raoul",
+    "status": "active",
+    "avatar": "AN"
+  },
+  {
+    "creatorSlug": "animateur-djo-l-indien",
+    "name": "Animateur DJO L'INDIEN",
+    "username": "animateur-djo-l-indien",
+    "status": "active",
+    "avatar": "AN"
+  },
+  {
+    "creatorSlug": "m-a",
+    "name": "M A",
+    "username": "m-a",
+    "status": "active",
+    "avatar": "M "
+  },
+  {
+    "creatorSlug": "boris-koutoglo",
+    "name": "Boris Koutoglo",
+    "username": "boris-koutoglo",
+    "status": "active",
+    "avatar": "BO"
+  },
+  {
+    "creatorSlug": "moctar-ali",
+    "name": "Moctar Ali",
+    "username": "moctar-ali",
+    "status": "active",
+    "avatar": "MO"
+  },
+  {
+    "creatorSlug": "radio-avulete-officiel",
+    "name": "Radio Avulete officiel",
+    "username": "radio-avulete-officiel",
+    "status": "active",
+    "avatar": "RA"
+  },
+  {
+    "creatorSlug": "chef-cantonde-kpenzid",
+    "name": "chef cantonde kpenzid",
+    "username": "chef-cantonde-kpenzid",
+    "status": "active",
+    "avatar": "CH"
+  }
+]

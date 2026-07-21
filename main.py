@@ -29,6 +29,7 @@ import configparser
 import httpx
 from src import spider, stream
 from src.proxy import ProxyDetector
+from src.tiktok_uploader import upload_to_tiktok_safe
 from src.utils import logger
 from src import utils
 from msg_push import (
@@ -483,6 +484,33 @@ def check_subprocess(record_name: str, record_url: str, ffmpeg_command: list, sa
             script_command = script_command.strip() + ' ' + ' '.join(params)
             run_script(script_command)
             logger.debug("脚本命令执行结束!")
+
+        # TikTok auto-upload (non-blocking, runs in separate thread)
+        if enable_tiktok_upload and tiktok_access_token and tiktok_open_id:
+            # Determine which file to upload
+            upload_file_path = save_file_path
+            
+            # If conversion to MP4 is enabled and we're recording TS, wait a moment for conversion
+            # Otherwise upload the original file
+            if converts_to_mp4 and save_type == 'TS' and not split_video_by_time:
+                # For MP4 conversion, we'll upload the original TS file since MP4 is still processing
+                # In a production environment, you might want to wait for MP4 or upload it separately
+                pass
+            
+            # Prepare description with default + record name
+            description = tiktok_default_description or f"录制于 {stop_time}"
+            if tiktok_default_hashtags:
+                description += f" {tiktok_default_hashtags}"
+            
+            logger.info(f"[{record_name}] 准备上传到TikTok...")
+            
+            # Start upload in separate thread to avoid blocking
+            upload_thread = threading.Thread(
+                target=upload_to_tiktok_safe,
+                args=(upload_file_path, record_name, tiktok_access_token, tiktok_open_id, description, tiktok_max_retries),
+                daemon=True
+            )
+            upload_thread.start()
 
     else:
         color_obj.print_colored(f"\n{record_name} {stop_time} 直播录制出错,返回码: {return_code}\n", color_obj.RED)
@@ -1862,6 +1890,15 @@ while True:
     push_check_seconds = int(read_config_value(config, '推送配置', '直播推送检测频率(秒)', 1800))
     begin_show_push = options.get(read_config_value(config, '推送配置', '开播推送开启(是/否)', "是"), True)
     over_show_push = options.get(read_config_value(config, '推送配置', '关播推送开启(是/否)', "否"), False)
+    # TikTok upload configuration
+    enable_tiktok_upload = options.get(read_config_value(config, 'TikTok上传配置', '启用TikTok自动上传', "否"), False)
+    tiktok_access_token = read_config_value(config, 'TikTok上传配置', 'TikTok访问令牌', '')
+    tiktok_open_id = read_config_value(config, 'TikTok上传配置', 'TikTok开放ID', '')
+    tiktok_max_retries = int(read_config_value(config, 'TikTok上传配置', '上传失败重试次数', '3'))
+    tiktok_upload_timeout = int(read_config_value(config, 'TikTok上传配置', '上传超时时间(秒)', '300'))
+    tiktok_privacy_level = read_config_value(config, 'TikTok上传配置', '默认视频隐私设置', 'PUBLIC_TO_EVERYONE')
+    tiktok_default_description = read_config_value(config, 'TikTok上传配置', '默认视频描述', '')
+    tiktok_default_hashtags = read_config_value(config, 'TikTok上传配置', '默认视频标签', '')
     sooplive_username = read_config_value(config, '账号密码', 'sooplive账号', '')
     sooplive_password = read_config_value(config, '账号密码', 'sooplive密码', '')
     flextv_username = read_config_value(config, '账号密码', 'flextv账号', '')
