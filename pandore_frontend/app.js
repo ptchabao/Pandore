@@ -46,9 +46,11 @@ function cardMarkup(item, compact = false) {
   const summary = compact ? creator.slice(0, 2).toUpperCase() : creator.slice(0, 2).toUpperCase();
   const liveMeta = item.id ? `<p>${formatDate(item.date)}</p><p>${item.durationLabel}</p>` : `<p>${item.count || 0} lives</p><p>${formatCompactDuration(item.totalDuration)}</p>`;
   const dataAttrs = item.id ? `data-live-id="${item.id}"` : `data-creator-slug="${item.creatorSlug}"`;
+  const thumb = item.thumbnail ? `<img class="card-thumb" src="${item.thumbnail}" alt="${creator}" />` : '';
   return `
     <article class="card" ${dataAttrs}>
       <div class="card-media">
+        ${thumb}
         <span class="card-symbol">${summary}</span>
         <span>${badge || '<span class="new-badge">Archive</span>'}</span>
       </div>

@@ -14,6 +14,7 @@ from urllib.parse import quote, unquote, urlparse
 
 ROOT = Path(__file__).resolve().parent
 ARCHIVE_ROOT = ROOT / "downloads" / "TikTok直播"
+IMAGE_ROOT = ROOT / "images"
 FRONTEND_DIR = ROOT / "pandore_frontend"
 ACCOUNTS_FILE = FRONTEND_DIR / "accounts.json"
 PORT = int(os.environ.get("PANDORE_PORT", "8000"))
@@ -52,6 +53,11 @@ class PandoreHandler(SimpleHTTPRequestHandler):
         if pathname.startswith("/media/"):
             rel_path = pathname[len("/media/"):]
             self._serve_media(rel_path)
+            return
+
+        if pathname.startswith("/images/"):
+            rel_path = pathname[len("/images/"):]
+            self._serve_image(rel_path)
             return
 
         resolved = (FRONTEND_DIR / pathname.lstrip("/")).resolve()
@@ -176,6 +182,17 @@ class PandoreHandler(SimpleHTTPRequestHandler):
             mime = mimetypes.guess_type(str(candidate))[0] or "application/octet-stream"
         self._send_file(candidate, mime)
 
+    def _serve_image(self, rel_path: str):
+        candidate = (IMAGE_ROOT / unquote(rel_path)).resolve()
+        if not candidate.is_relative_to(IMAGE_ROOT.resolve()):
+            self._send_json({"error": "Invalid path"}, status=400)
+            return
+        if not candidate.is_file():
+            self._send_json({"error": "Image not found"}, status=404)
+            return
+        mime = mimetypes.guess_type(str(candidate))[0] or "application/octet-stream"
+        self._send_file(candidate, mime)
+
     def _send_file(self, file_path: Path, mime: str):
         try:
             data = file_path.read_bytes()
@@ -248,7 +265,8 @@ def catalog() -> list[dict[str, Any]]:
     if not ARCHIVE_ROOT.exists():
         return items
 
-    for path in ARCHIVE_ROOT.rglob("*"):
+    image_pool = sorted(path.name for path in IMAGE_ROOT.glob("*.png"))
+    for index, path in enumerate(ARCHIVE_ROOT.rglob("*")):
         if not path.is_file() or path.suffix.lower() not in SUPPORTED_EXTENSIONS:
             continue
 
@@ -266,6 +284,7 @@ def catalog() -> list[dict[str, Any]]:
         duration_sec = estimate_duration_seconds(size)
         archive_relative = path.relative_to(ARCHIVE_ROOT).as_posix()
         root_relative = path.relative_to(ROOT).as_posix()
+        thumbnail_name = image_pool[index % len(image_pool)] if image_pool else ""
         items.append(
             {
                 "id": slugify(f"{creator_slug}-{date_str}-{time_str}-{path.stem}"),
@@ -280,7 +299,7 @@ def catalog() -> list[dict[str, Any]]:
                 "extension": path.suffix.lower(),
                 "file": root_relative,
                 "videoUrl": f"/media/{quote(archive_relative)}",
-                "thumbnail": f"https://placehold.co/320x180/111827/ffffff?text={quote(creator)}",
+                "thumbnail": f"/images/{quote(thumbnail_name)}" if thumbnail_name else f"https://placehold.co/320x180/111827/ffffff?text={quote(creator)}",
                 "progress": min(0.95, max(0.1, (duration_sec % 300) / max(duration_sec, 1))),
                 "isNew": (datetime.now() - dt).total_seconds() < 86400,
             }
