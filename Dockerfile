@@ -1,6 +1,7 @@
 FROM python:3.11-slim
 
 WORKDIR /app
+ENV TERM=xterm-256color
 
 COPY . /app
 
