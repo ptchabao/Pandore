@@ -54,7 +54,10 @@ function renderAccounts(accounts) {
 }
 
 async function loadOverview() {
-  try { renderOverview(await fetchJson('/api/overview')); } catch (error) { console.error(error); $('#recordingsGrid').innerHTML = emptyState('Impossible de charger la bibliothèque'); }
+  try { renderOverview(await fetchJson('/api/overview')); } catch (error) {
+    if (error.message === 'Authentication required' || error.message.includes('session')) { window.location.href = '/login'; return; }
+    console.error(error); $('#recordingsGrid').innerHTML = emptyState('Impossible de charger la bibliothèque');
+  }
 }
 
 async function loadAccounts() { renderAccounts((await fetchJson('/api/overview')).accounts || []); }

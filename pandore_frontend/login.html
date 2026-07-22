@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pandore Vault — Accès sécurisé</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body class="auth-page">
+  <main class="auth-shell">
+    <section class="auth-visual"><a class="side-brand" href="/"><span class="brand-mark">P</span><span>Pandore</span></a><div class="vault-hero"><span class="vault-lock">⌑</span><p class="eyebrow blue-eyebrow">Pandore Vault</p><h1>Vos lives.<br /><span>Votre coffre.</span></h1><p>Un espace privé, sécurisé et indexé par IA pour vos archives vidéo.</p><div class="vault-points"><span>✓ Données isolées</span><span>✓ Sessions sécurisées</span><span>✓ Vos clés, vos archives</span></div></div></section>
+    <section class="auth-card-wrap"><div class="auth-card"><div class="auth-heading"><p class="section-kicker">Espace sécurisé</p><h2 id="authTitle">Bienvenue dans Pandore</h2><p id="authSubtitle">Connectez-vous pour accéder à votre bibliothèque privée.</p></div><form id="authForm"><label>Email<input id="authEmail" type="email" autocomplete="email" required placeholder="vous@exemple.com" /></label><label>Mot de passe<input id="authPassword" type="password" autocomplete="current-password" required minlength="10" placeholder="10 caractères minimum" /></label><label id="confirmLabel" class="hidden">Confirmer le mot de passe<input id="authConfirm" type="password" minlength="10" /></label><div class="auth-options"><label class="checkbox"><input type="checkbox" /> Se souvenir de moi</label><a href="#" id="forgotLink">Mot de passe oublié ?</a></div><button class="auth-submit" type="submit" id="authSubmit">Se connecter <span>→</span></button><p id="authError" class="auth-error"></p></form><div class="auth-divider"><span>ou continuer avec</span></div><div class="oauth-row"><button disabled>G Google</button><button disabled>◉ GitHub</button></div><p class="auth-switch"><span id="switchText">Nouveau sur Pandore ?</span> <button id="switchMode" type="button">Créer un compte</button></p><small class="auth-legal">En continuant, vous acceptez les conditions d'utilisation et la politique de confidentialité.</small></div></section>
+  </main>
+  <script src="/auth.js"></script>
+</body>
+</html>

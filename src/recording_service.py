@@ -68,13 +68,25 @@ class RecordingService:
         row = rows[0]
         return dict(row)
 
-    def list_recordings(self) -> list[dict[str, Any]]:
-        rows = query("SELECT * FROM recordings ORDER BY created_at DESC")
+    def list_recordings(self, user_id: str | None = None) -> list[dict[str, Any]]:
+        if user_id:
+            rows = query("SELECT * FROM recordings WHERE user_id = ? ORDER BY created_at DESC", (user_id,))
+        else:
+            rows = query("SELECT * FROM recordings ORDER BY created_at DESC")
         return [dict(row) for row in rows]
 
-    def list_accounts(self) -> list[dict[str, Any]]:
-        rows = query("SELECT * FROM accounts ORDER BY last_seen DESC")
-        return [dict(row) for row in rows]
+    def list_accounts(self, user_id: str | None = None) -> list[dict[str, Any]]:
+        if user_id:
+            rows = query("SELECT * FROM accounts WHERE user_id = ? ORDER BY last_seen DESC", (user_id,))
+        else:
+            rows = query("SELECT * FROM accounts ORDER BY last_seen DESC")
+        accounts = []
+        for row in rows:
+            account = dict(row)
+            account["creatorSlug"] = account.get("slug")
+            account["avatar"] = (account.get("name") or "PA")[:2].upper()
+            accounts.append(account)
+        return accounts
 
     def enqueue_job(self, recording_slug: str, job_type: str, payload: dict[str, Any]) -> None:
         job = {
