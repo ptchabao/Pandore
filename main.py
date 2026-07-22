@@ -32,6 +32,7 @@ from src.proxy import ProxyDetector
 from src.tiktok_uploader import upload_to_tiktok_safe
 from src.utils import logger
 from src import utils
+from src.convex_sync import ConvexSync
 from msg_push import (
     dingtalk, xizhi, tg_bot, send_email, bark, ntfy, pushplus
 )
@@ -79,6 +80,8 @@ os_type = os.name
 clear_command = "cls" if os_type == 'nt' else "clear"
 color_obj = utils.Color()
 os.environ['PATH'] = ffmpeg_path + os.pathsep + current_env_path
+
+convex_sync = ConvexSync()
 
 
 def signal_handler(_signal, _frame):
@@ -487,30 +490,55 @@ def check_subprocess(record_name: str, record_url: str, ffmpeg_command: list, sa
 
         # TikTok auto-upload (non-blocking, runs in separate thread)
         if enable_tiktok_upload and tiktok_access_token and tiktok_open_id:
-            # Determine which file to upload
             upload_file_path = save_file_path
-            
-            # If conversion to MP4 is enabled and we're recording TS, wait a moment for conversion
-            # Otherwise upload the original file
             if converts_to_mp4 and save_type == 'TS' and not split_video_by_time:
-                # For MP4 conversion, we'll upload the original TS file since MP4 is still processing
-                # In a production environment, you might want to wait for MP4 or upload it separately
                 pass
-            
-            # Prepare description with default + record name
             description = tiktok_default_description or f"录制于 {stop_time}"
             if tiktok_default_hashtags:
                 description += f" {tiktok_default_hashtags}"
-            
             logger.info(f"[{record_name}] 准备上传到TikTok...")
-            
-            # Start upload in separate thread to avoid blocking
             upload_thread = threading.Thread(
                 target=upload_to_tiktok_safe,
                 args=(upload_file_path, record_name, tiktok_access_token, tiktok_open_id, description, tiktok_max_retries),
                 daemon=True
             )
             upload_thread.start()
+
+        if convex_sync.deployment:
+            try:
+                slug = re.sub(r"[^a-zA-Z0-9._-]+", "-", record_name).strip("-") or f"recording-{int(time.time())}"
+                account_slug = None
+                if anchor_name:
+                    account_slug = re.sub(r"[^a-zA-Z0-9._-]+", "-", anchor_name).strip("-")
+                convex_sync.upsert_account(
+                    slug=account_slug or slug,
+                    name=anchor_name or record_name,
+                    username=anchor_name or None,
+                    platform=platform,
+                    status="active",
+                )
+                convex_sync.upsert_recording(
+                    slug=slug,
+                    account_slug=account_slug,
+                    title=anchor_name or record_name,
+                    file_path=save_file_path,
+                    file_name=Path(save_file_path).name,
+                    status="recorded",
+                    metadata={"recordName": record_name, "platform": platform, "saveType": save_type},
+                )
+                threading.Thread(
+                    target=lambda: convex_sync.finalize_recording(
+                        slug=slug,
+                        file_path=save_file_path,
+                        account_slug=account_slug,
+                        title=anchor_name or record_name,
+                        delete_local=True,
+                    ),
+                    daemon=True,
+                ).start()
+            except Exception as exc:
+                logger.error(f"Convex sync failed: {exc}")
+                # Keep recorder running even if Convex is temporarily unavailable.
 
     else:
         color_obj.print_colored(f"\n{record_name} {stop_time} 直播录制出错,返回码: {return_code}\n", color_obj.RED)
