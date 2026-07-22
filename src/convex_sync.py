@@ -9,7 +9,10 @@ import httpx
 class ConvexSync:
     def __init__(self, deployment: Optional[str] = None, admin_key: Optional[str] = None):
         self._load_env_file()
-        self.deployment = deployment or os.environ.get("CONVEX_DEPLOYMENT") or os.environ.get("CONVEX_URL")
+        configured_url = os.environ.get("CONVEX_URL")
+        configured_deployment = os.environ.get("CONVEX_DEPLOYMENT")
+        self.deployment_selector = configured_deployment
+        self.deployment = deployment or configured_url or (configured_deployment if configured_deployment and configured_deployment.startswith("http") else None)
         self.admin_key = admin_key or os.environ.get("CONVEX_ADMIN_KEY") or os.environ.get("CONVEX_DEPLOY_KEY")
         self.base_url = self.deployment.rstrip("/") if self.deployment else None
         self.client = httpx.Client(timeout=60.0)
