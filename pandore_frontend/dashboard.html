@@ -3,40 +3,54 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard Pandore</title>
+  <title>Pandore — Bibliothèque de lives</title>
   <link rel="stylesheet" href="/styles.css" />
 </head>
 <body class="dashboard-page">
-  <div class="app-shell">
-    <header class="topbar">
-      <div class="brand">Pandore</div>
-      <nav class="nav-links">
-        <a href="/">🏛 Accueil</a>
-        <a href="/dashboard">🗝 Dashboard</a>
+  <div class="dashboard-shell">
+    <aside class="sidebar">
+      <a class="side-brand" href="/"><span class="brand-mark">P</span><span>Pandore</span></a>
+      <nav class="side-nav">
+        <a class="active" href="/dashboard"><span>⌂</span> Accueil</a>
+        <a href="#recordings"><span>▣</span> Bibliothèque</a>
+        <a href="#favorites"><span>♡</span> Favoris</a>
+        <a href="#accounts"><span>♙</span> Comptes suivis</a>
+        <a href="#ai-search"><span>✦</span> Recherche IA</a>
+        <a href="#transcripts"><span>≡</span> Transcriptions</a>
+        <a href="#stats"><span>▥</span> Statistiques</a>
       </nav>
-    </header>
+      <div class="sidebar-bottom"><a href="#settings"><span>⚙</span> Paramètres</a><small>Bibliothèque personnelle<br />Synchronisée avec Pandore</small></div>
+    </aside>
 
-    <main class="content dashboard-content">
-      <section class="hero hero-compact">
-        <p class="eyebrow">Temple des gardiens</p>
-        <h1>Boîte des comptes</h1>
-        <p>Gère les profils à suivre, les traces à préserver et les secrets à garder.</p>
-      </section>
+    <main class="dashboard-main">
+      <header class="dashboard-topbar">
+        <div class="mobile-brand"><span class="brand-mark">P</span> Pandore</div>
+        <div class="dashboard-search"><span>⌕</span><input id="globalSearch" type="search" placeholder="Rechercher un créateur, un sujet, une date..." /><kbd>⌘ K</kbd></div>
+        <div class="top-actions"><button aria-label="Notifications">♧</button><span class="user-avatar">OS</span></div>
+      </header>
 
-      <section class="dashboard-grid dashboard-grid-single">
-        <div class="dashboard-card wide">
-          <div class="dashboard-header">
-            <h2>Comptes de suivi</h2>
-            <span>Ajouter / retirer</span>
-          </div>
-          <div id="dashboardAccounts" class="accounts-list"></div>
-          <form id="dashboardForm" class="account-form">
-            <input id="dashboardName" type="text" placeholder="Nom du créateur" required />
-            <input id="dashboardUsername" type="text" placeholder="Pseudo / username" />
-            <button type="submit">Ajouter au suivi</button>
-          </form>
-        </div>
-      </section>
+      <div class="dashboard-content">
+        <section class="dashboard-hero">
+          <div><p class="eyebrow blue-eyebrow">Votre bibliothèque</p><h1>Tous vos lives.<br /><span>Organisés automatiquement.</span></h1><p class="hero-lead">Retrouvez chaque moment, chaque voix et chaque idée en quelques secondes.</p><a class="primary-button" href="#recordings">Explorer la bibliothèque <span>→</span></a></div>
+          <div class="hero-orbit"><div class="orbit-card orbit-card-one">✦<strong>IA indexée</strong><small>Recherche intelligente</small></div><div class="orbit-card orbit-card-two">◉<strong>En sécurité</strong><small>Archives synchronisées</small></div><div class="hero-glow">P</div></div>
+        </section>
+
+        <section id="stats" class="metric-grid">
+          <article class="metric-card"><span class="metric-icon blue">▣</span><div><strong id="metricLives">—</strong><small>Lives enregistrés</small></div><em>↗</em></article>
+          <article class="metric-card"><span class="metric-icon purple">◷</span><div><strong id="metricHours">—</strong><small>Heures d'archives</small></div><em>↗</em></article>
+          <article class="metric-card"><span class="metric-icon green">♙</span><div><strong id="metricCreators">—</strong><small>Créateurs suivis</small></div><em>↗</em></article>
+          <article class="metric-card"><span class="metric-icon orange">◈</span><div><strong id="metricPlatforms">4</strong><small>Plateformes</small></div><em>↗</em></article>
+        </section>
+
+        <section id="ai-search" class="ai-panel"><div class="ai-title"><span class="ai-spark">✦</span><div><h2>Recherche IA</h2><p>Posez une question à votre bibliothèque</p></div></div><div class="ai-input"><span>✦</span><input id="aiQuery" placeholder="Ex : Trouve les moments où il parle de Bitcoin..." /><button id="aiSearchButton">Rechercher</button></div><div class="ai-suggestions"><button>Les lives d'hier</button><button>Moments où il parle d'immobilier</button><button>Résumer le dernier live</button></div></section>
+
+        <section id="continue" class="library-section"><div class="section-heading"><div><p class="section-kicker">Reprendre votre session</p><h2>Continuer à regarder</h2></div><a href="#recordings">Voir tout →</a></div><div id="continueGrid" class="video-grid continue-grid"></div></section>
+        <section id="recordings" class="library-section"><div class="section-heading"><div><p class="section-kicker">Votre collection</p><h2>Derniers enregistrements</h2></div><div class="view-toggle"><button class="selected">▦</button><button>☷</button></div></div><div id="recordingsGrid" class="video-grid"></div></section>
+
+        <section id="accounts" class="library-section accounts-section"><div class="section-heading"><div><p class="section-kicker">Votre veille</p><h2>Comptes suivis</h2></div><button id="addAccountButton" class="outline-button">+ Ajouter un compte</button></div><div id="dashboardAccounts" class="creator-grid"></div><form id="dashboardForm" class="account-form redesigned-form"><input id="dashboardName" type="text" placeholder="Nom du créateur" required /><input id="dashboardUsername" type="text" placeholder="@pseudo" /><button type="submit">Ajouter</button></form></section>
+
+        <section class="bottom-grid"><article id="transcripts" class="insight-card"><div class="insight-heading"><span class="insight-icon purple-bg">≡</span><div><p class="section-kicker">Intelligence</p><h3>Transcriptions</h3></div><span class="insight-arrow">→</span></div><strong>96<span>%</span></strong><p>de votre bibliothèque audio est transcrite et consultable.</p><div class="mini-progress"><span style="width:96%"></span></div></article><article class="insight-card"><div class="insight-heading"><span class="insight-icon green-bg">◷</span><div><p class="section-kicker">Cette semaine</p><h3>Activité</h3></div><span class="insight-arrow">→</span></div><div class="activity-bars"><i style="height:35%"></i><i style="height:60%"></i><i style="height:45%"></i><i style="height:80%"></i><i style="height:55%"></i><i style="height:95%"></i><i style="height:70%"></i></div><p>17 lives capturés cette semaine</p></article></section>
+      </div>
     </main>
   </div>
   <script src="/dashboard.js"></script>

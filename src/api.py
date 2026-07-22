@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 
 from src.db import init_db, query
 from src.recording_service import RecordingService
-from pandore_server import build_overview
+from pandore_server import build_overview, load_accounts, save_accounts, slugify
 
 FRONTEND_DIR = Path(__file__).resolve().parent.parent / "pandore_frontend"
 
@@ -20,6 +20,21 @@ service = RecordingService()
 @app.get("/")
 async def root() -> FileResponse:
     return FileResponse(FRONTEND_DIR / "index.html")
+
+
+@app.get("/dashboard.js")
+async def dashboard_script() -> FileResponse:
+    return FileResponse(FRONTEND_DIR / "dashboard.js", media_type="application/javascript")
+
+
+@app.get("/app.js")
+async def app_script() -> FileResponse:
+    return FileResponse(FRONTEND_DIR / "app.js", media_type="application/javascript")
+
+
+@app.get("/styles.css")
+async def styles() -> FileResponse:
+    return FileResponse(FRONTEND_DIR / "styles.css", media_type="text/css")
 
 
 @app.get("/dashboard")
@@ -67,6 +82,42 @@ async def recordings() -> JSONResponse:
 @app.get("/accounts")
 async def accounts() -> JSONResponse:
     return JSONResponse({"accounts": service.list_accounts()})
+
+
+@app.post("/api/accounts")
+async def create_account(request: Request) -> JSONResponse:
+    payload = await request.json()
+    name = str(payload.get("name") or payload.get("creator") or "").strip()
+    username = str(payload.get("username") or name).strip()
+    if not name:
+        raise HTTPException(status_code=400, detail="Missing account name")
+
+    accounts_data = load_accounts()
+    creator_slug = slugify(payload.get("creatorSlug") or username or name)
+    account = {
+        "creatorSlug": creator_slug,
+        "name": name,
+        "username": username or creator_slug,
+        "status": payload.get("status", "active"),
+        "avatar": name[:2].upper(),
+    }
+    existing = next((item for item in accounts_data if item["creatorSlug"] == creator_slug), None)
+    if existing:
+        existing.update(account)
+    else:
+        accounts_data.append(account)
+    save_accounts(accounts_data)
+    return JSONResponse({"accounts": accounts_data, "ok": True})
+
+
+@app.delete("/api/accounts/{creator_slug}")
+async def delete_account(creator_slug: str) -> JSONResponse:
+    accounts_data = load_accounts()
+    filtered = [item for item in accounts_data if item["creatorSlug"] != creator_slug]
+    if len(filtered) == len(accounts_data):
+        raise HTTPException(status_code=404, detail="Account not found")
+    save_accounts(filtered)
+    return JSONResponse({"accounts": filtered, "ok": True})
 
 
 @app.get("/recordings/{slug}")
