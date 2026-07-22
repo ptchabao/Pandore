@@ -7,6 +7,7 @@ from pathlib import Path
 
 from src.db import init_db, query
 from src.recording_service import RecordingService
+from pandore_server import build_overview
 
 FRONTEND_DIR = Path(__file__).resolve().parent.parent / "pandore_frontend"
 
@@ -20,6 +21,16 @@ service = RecordingService()
 @app.get("/")
 async def root() -> FileResponse:
     return FileResponse(FRONTEND_DIR / "index.html")
+
+
+@app.get("/dashboard")
+async def dashboard() -> FileResponse:
+    return FileResponse(FRONTEND_DIR / "dashboard.html")
+
+
+@app.get("/api/overview")
+async def overview() -> JSONResponse:
+    return JSONResponse(build_overview())
 
 
 @app.on_event("startup")
