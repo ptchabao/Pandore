@@ -7,7 +7,7 @@ from typing import Any
 
 from src.convex_sync import ConvexSync
 from src.db import execute, query
-from src.queue import TaskQueue
+from src.task_queue import TaskQueue
 
 LOGGER = logging.getLogger("pandore.workers")
 

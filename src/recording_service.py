@@ -7,7 +7,7 @@ from typing import Any
 
 from src.db import execute, query
 from src.models import Account, Recording
-from src.queue import TaskQueue
+from src.task_queue import TaskQueue
 
 
 class RecordingService:
