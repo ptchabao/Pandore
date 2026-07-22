@@ -1,13 +1,25 @@
 from __future__ import annotations
 
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
+from pathlib import Path
 
 from src.db import init_db, query
 from src.recording_service import RecordingService
 
+FRONTEND_DIR = Path(__file__).resolve().parent.parent / "pandore_frontend"
+
 app = FastAPI(title="Pandore API")
+app.mount("/assets", StaticFiles(directory=FRONTEND_DIR / "assets"), name="assets")
+app.mount("/static", StaticFiles(directory=FRONTEND_DIR), name="static")
+app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
 service = RecordingService()
+
+
+@app.get("/")
+async def root() -> FileResponse:
+    return FileResponse(FRONTEND_DIR / "index.html")
 
 
 @app.on_event("startup")
