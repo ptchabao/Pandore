@@ -2,7 +2,14 @@ from __future__ import annotations
 
 import threading
 import os
+import sys
+from pathlib import Path
 import uvicorn
+
+# Ensure the repository root is on sys.path when the script is launched directly.
+root_path = Path(__file__).resolve().parent.parent
+if str(root_path) not in sys.path:
+    sys.path.insert(0, str(root_path))
 
 from src.db import init_db
 from src.workers import JobWorker

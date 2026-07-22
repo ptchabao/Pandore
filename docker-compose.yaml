@@ -25,4 +25,4 @@ services:
       - ./downloads:/app/downloads
       - ./pandore_frontend:/app/pandore_frontend
     restart: always
-    command: ["python3", "src/app.py"]
+    command: ["python3", "-m", "src.app"]
