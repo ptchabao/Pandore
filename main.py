@@ -33,6 +33,9 @@ from src.tiktok_uploader import upload_to_tiktok_safe
 from src.utils import logger
 from src import utils
 from src.convex_sync import ConvexSync
+from src.db import init_db
+from src.recording_service import RecordingService
+from src.models import Account, Recording
 from msg_push import (
     dingtalk, xizhi, tg_bot, send_email, bark, ntfy, pushplus
 )
@@ -82,6 +85,8 @@ color_obj = utils.Color()
 os.environ['PATH'] = ffmpeg_path + os.pathsep + current_env_path
 
 convex_sync = ConvexSync()
+recording_service = RecordingService()
+init_db()
 
 
 def signal_handler(_signal, _frame):
@@ -510,34 +515,33 @@ def check_subprocess(record_name: str, record_url: str, ffmpeg_command: list, sa
                 account_slug = None
                 if anchor_name:
                     account_slug = re.sub(r"[^a-zA-Z0-9._-]+", "-", anchor_name).strip("-")
-                convex_sync.upsert_account(
-                    slug=account_slug or slug,
-                    name=anchor_name or record_name,
-                    username=anchor_name or None,
-                    platform=platform,
-                    status="active",
+                account_slug_final = account_slug or slug
+
+                recording_service.upsert_account(
+                    Account(
+                        slug=account_slug_final,
+                        name=anchor_name or record_name,
+                        username=anchor_name or None,
+                        platform=platform,
+                        status="active",
+                    )
                 )
-                convex_sync.upsert_recording(
-                    slug=slug,
-                    account_slug=account_slug,
-                    title=anchor_name or record_name,
-                    file_path=save_file_path,
-                    file_name=Path(save_file_path).name,
-                    status="recorded",
-                    metadata={"recordName": record_name, "platform": platform, "saveType": save_type},
-                )
-                threading.Thread(
-                    target=lambda: convex_sync.finalize_recording_safe(
+                recording_service.create_recording(
+                    Recording(
                         slug=slug,
-                        file_path=save_file_path,
-                        account_slug=account_slug,
+                        account_slug=account_slug_final,
                         title=anchor_name or record_name,
-                        delete_local=True,
-                    ),
-                    daemon=True,
-                ).start()
+                        file_path=save_file_path,
+                        file_name=Path(save_file_path).name,
+                        platform=platform,
+                        status="recorded",
+                        metadata={"recordName": record_name, "platform": platform, "saveType": save_type},
+                    )
+                )
+                recording_service.enqueue_metadata(slug)
+                recording_service.enqueue_upload(slug)
             except Exception as exc:
-                logger.error(f"Convex sync failed: {exc}")
+                logger.error(f"Convex queue enqueue failed: {exc}")
                 # Keep recorder running even if Convex is temporarily unavailable.
 
     else:

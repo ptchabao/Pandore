@@ -1,19 +1,28 @@
 version: '3.8'
 
 services:
+  redis:
+    image: redis:7-alpine
+    container_name: pandore-redis
+    ports:
+      - "6379:6379"
+    restart: always
+
   pandore:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: pandore
+    depends_on:
+      - redis
     environment:
       - PANDORE_PORT=8000
       - TERM=xterm-256color
+      - REDIS_URL=redis://redis:6379/0
     ports:
       - "8000:8000"
-    tty: true
-    stdin_open: true
     volumes:
       - ./downloads:/app/downloads
       - ./pandore_frontend:/app/pandore_frontend
     restart: always
+    command: ["python3", "src/app.py"]

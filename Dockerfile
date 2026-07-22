@@ -15,4 +15,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 8000
 
-CMD ["sh", "-c", "python3 pandore_server.py & python3 main.py"]
+CMD ["sh", "-c", "python3 src/app.py"]
