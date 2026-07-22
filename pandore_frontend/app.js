@@ -72,10 +72,23 @@ function renderRow(title, items, target, options = {}) {
   `;
 }
 
+function renderStorage(storage) {
+  const summary = document.querySelector('#storageSummary');
+  if (!storage || !summary) return;
+  const sizeMb = storage.totalBytes ? Math.round(storage.totalBytes / 1024 / 1024) : 0;
+  summary.innerHTML = `
+    <strong>Archives enregistrées</strong>
+    <p>${storage.recordingsCount} vidéos</p>
+    <p>${sizeMb} Mo au total</p>
+    <p>Racine d'archive : ${storage.archiveRoot}</p>
+  `;
+}
+
 function renderOverview(data) {
   state.overview = data;
   els.heroTitle.textContent = data.hero.title;
   els.heroSubtitle.textContent = data.hero.subtitle;
+  renderStorage(data.storage);
   renderRow('Continue à regarder', data.continueWatching, els.continueSection);
   renderRow('Lives récents', data.recent.slice(0, 6), els.recentSection, { compact: true });
   renderRow('Par créateur', data.creators, els.creatorsSection, { compact: true });

@@ -527,7 +527,7 @@ def check_subprocess(record_name: str, record_url: str, ffmpeg_command: list, sa
                     metadata={"recordName": record_name, "platform": platform, "saveType": save_type},
                 )
                 threading.Thread(
-                    target=lambda: convex_sync.finalize_recording(
+                    target=lambda: convex_sync.finalize_recording_safe(
                         slug=slug,
                         file_path=save_file_path,
                         account_slug=account_slug,

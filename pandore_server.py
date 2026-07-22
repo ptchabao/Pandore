@@ -98,6 +98,10 @@ class PandoreHandler(SimpleHTTPRequestHandler):
             self._send_json({"accounts": load_accounts()})
             return
 
+        if pathname == "/api/recordings":
+            self._send_json({"recordings": load_recordings()})
+            return
+
         if pathname.startswith("/api/search"):
             query = urlparse(self.path).query
             params = dict(item.split("=", 1) for item in query.split("&") if "=" in item)
@@ -338,6 +342,26 @@ def load_accounts() -> list[dict[str, Any]]:
     return accounts
 
 
+def load_recordings() -> list[dict[str, Any]]:
+    items = catalog()
+    return [
+        {
+            "id": item["id"],
+            "creator": item["creator"],
+            "creatorSlug": item["creatorSlug"],
+            "title": item["title"],
+            "date": item["date"],
+            "durationLabel": item["durationLabel"],
+            "sizeBytes": item["sizeBytes"],
+            "file": item["file"],
+            "videoUrl": item["videoUrl"],
+            "thumbnail": item["thumbnail"],
+            "isNew": item.get("isNew", False),
+        }
+        for item in items
+    ]
+
+
 def save_accounts(accounts: list[dict[str, Any]]) -> None:
     ACCOUNTS_FILE.write_text(json.dumps(accounts, ensure_ascii=False, indent=2), encoding="utf-8")
 
@@ -375,6 +399,12 @@ def build_overview() -> dict[str, Any]:
     for item in continue_list:
         item["progress"] = round((item["timestamp"] % 100) / 100, 2)
 
+    storage_info = {
+        "recordingsCount": len(items),
+        "totalBytes": sum(item["sizeBytes"] for item in items),
+        "archiveRoot": str(ARCHIVE_ROOT),
+    }
+
     return {
         "hero": {
             "title": "Pandore — Ici, le secret des hommes laisse sa trace",
@@ -385,6 +415,7 @@ def build_overview() -> dict[str, Any]:
         "recent": recent,
         "creators": creators,
         "accounts": dashboard_accounts,
+        "storage": storage_info,
         "dateGroups": [
             {"label": month, "items": items_for_group}
             for month, items_for_group in sorted(date_groups.items(), reverse=True)[:8]
