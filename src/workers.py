@@ -21,10 +21,17 @@ class JobWorker:
     def run(self) -> None:
         LOGGER.info("Starting worker for %s", self.queue_name)
         while True:
-            job = self.queue.pop(self.queue_name, timeout=5)
+            try:
+                job = self.queue.pop(self.queue_name, timeout=5)
+            except Exception as exc:
+                LOGGER.exception("Queue pop failed: %s", exc)
+                time.sleep(2)
+                continue
+
             if job is None:
                 time.sleep(1)
                 continue
+
             try:
                 self.handle(job)
             except Exception as exc:
