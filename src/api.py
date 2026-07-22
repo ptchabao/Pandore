@@ -14,7 +14,6 @@ FRONTEND_DIR = Path(__file__).resolve().parent.parent / "pandore_frontend"
 app = FastAPI(title="Pandore API")
 app.mount("/assets", StaticFiles(directory=FRONTEND_DIR / "assets"), name="assets")
 app.mount("/static", StaticFiles(directory=FRONTEND_DIR), name="static")
-app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
 service = RecordingService()
 
 
